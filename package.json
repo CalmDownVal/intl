@@ -1,0 +1,19 @@
+{
+	"name": "@calmdownval/intl-monorepo",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"lint": "eslint --ignore-pattern **/build/* ./packages/**/*.{js,ts}"
+	},
+	"devDependencies": {
+		"@calmdownval/eslint-config": "1.0.1",
+		"@calmdownval/eslint-import-resolver-typescript": "1.1.2",
+		"@typescript-eslint/eslint-plugin": "5.16.0",
+		"@typescript-eslint/parser": "5.16.0",
+		"eslint": "8.11.0",
+		"eslint-plugin-import": "2.25.4",
+		"typescript": "4.6.3"
+	}
+}

@@ -1,0 +1,38 @@
+{
+	"name": "@calmdownval/intl-preact",
+	"description": "Preact bindings for the @calmdownval/intl package.",
+	"version": "1.0.0-beta.0",
+	"license": "ISC",
+	"main": "./build/index.min.js",
+	"module": "./build/index.min.mjs",
+	"types": "./build/index.d.ts",
+	"exports": {
+		".": {
+			"require": "./build/index.min.js",
+			"import": "./build/index.min.mjs",
+			"types": "./build/index.d.ts"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/CalmDownVal/intl.git"
+	},
+	"scripts": {
+		"build": "rollup --config"
+	},
+	"peerDependencies": {
+		"@calmdownval/intl": "^1.0.0",
+		"preact": "^10.6.6"
+	},
+	"devDependencies": {
+		"@rollup/plugin-typescript": "8.3.1",
+		"preact": "10.6.6",
+		"rollup": "2.70.1",
+		"rollup-plugin-delete": "2.0.0",
+		"rollup-plugin-dts": "4.2.0",
+		"rollup-plugin-node-externals": "4.0.0",
+		"rollup-plugin-terser": "7.0.2",
+		"tslib": "2.3.1",
+		"typescript": "4.6.3"
+	}
+}

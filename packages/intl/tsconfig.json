@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"baseUrl": "./src",
+		"charset": "utf8",
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"lib": [
+			"ESNext"
+		],
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"newLine": "lf",
+		"paths": {
+			"~/*": [
+				"*"
+			]
+		},
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ESNext",
+		"types": []
+	},
+	"include": [
+		"./src/**/*"
+	]
+}
