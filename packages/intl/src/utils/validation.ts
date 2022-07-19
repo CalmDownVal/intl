@@ -1,5 +1,5 @@
+import { IntlError } from '~/IntlError';
 import type { Attributes, Messages, Placeholder } from '~/parser/parser';
-import { TranslationError } from '~/TranslationError';
 
 import { getFormatName } from './placeholder';
 
@@ -14,8 +14,8 @@ export function assertParamsValid<TValidators extends readonly Validator<any>[]>
 	const formatName = getFormatName(placeholder as Placeholder);
 
 	if (placeholder.length - 2 > length) {
-		throw new TranslationError(
-			TranslationError.INVALID_PARAMETER,
+		throw new IntlError(
+			IntlError.INVALID_PARAMETER,
 			`too many parameters for format '${formatName}'`
 		);
 	}
@@ -70,8 +70,8 @@ function getAnyValue(obj: {}): unknown {
 }
 
 function fail(expected: string, formatName: string, paramIndex: number) {
-	throw new TranslationError(
-		TranslationError.INVALID_PARAMETER,
+	throw new IntlError(
+		IntlError.INVALID_PARAMETER,
 		`expected parameter ${paramIndex + 1} of format '${formatName}' to be ${expected}`
 	);
 }

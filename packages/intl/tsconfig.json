@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
 		"baseUrl": "./src",
-		"charset": "utf8",
 		"forceConsistentCasingInFileNames": true,
 		"isolatedModules": true,
 		"lib": [

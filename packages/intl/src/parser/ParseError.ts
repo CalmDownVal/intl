@@ -1,12 +1,12 @@
-export class ParseError extends Error {
-	private readonly isParseError = true;
+import { IntlError } from '~/IntlError';
 
+export class ParseError extends IntlError {
 	public constructor(
 		message: string,
 		public readonly input: string,
 		public readonly at: number
 	) {
-		super(message);
+		super(IntlError.PARSE_ERROR, message);
 	}
 
 	public toString() {
@@ -23,9 +23,5 @@ export class ParseError extends Error {
 
 		const snippet = `${this.input.slice(trimStart, trimEnd)}\n${' '.repeat(this.at - trimStart)}^`;
 		return `${this.message} at pos ${this.at}:\n\n${snippet}\n\n${this.stack}`;
-	}
-
-	public static is(obj: unknown): obj is ParseError {
-		return (obj as ParseError | undefined)?.isParseError === true;
 	}
 }

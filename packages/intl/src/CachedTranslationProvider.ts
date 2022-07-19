@@ -1,9 +1,9 @@
 import { DefaultInterpreter } from './DefaultInterpreter';
-import * as builtInFormats from './format';
+import { BUILTIN_FORMATS } from './format';
+import { IntlError } from './IntlError';
 import { MappedFormatProvider } from './MappedFormatProvider';
 import { parse } from './parser/parser';
-import { TranslationError } from './TranslationError';
-import type { FormatFactory, Interpreter, Locale, PlaceholderExpansion, TranslationMap, TranslationProvider, Vars } from './types';
+import type { Format, Interpreter, Locale, PlaceholderExpansion, TranslationMap, TranslationProvider, Vars } from './types';
 import { flattenTranslationMap, mapObjectValues } from './utils/mapping';
 
 export enum CacheMode {
@@ -24,7 +24,7 @@ export enum CacheMode {
 	Lazy,
 
 	/**
-	 * Each time a translation is requested, it is interpreted anew; No caching
+	 * Each time a translation is requested, it is (re-)interpreted; No caching
 	 * takes place.
 	 *
 	 * Useful to lower memory usage when individual phrases are only used
@@ -57,7 +57,7 @@ export class CachedTranslationProvider implements TranslationProvider {
 	public expand(key: string, vars?: Vars) {
 		let expand = this.expansions[key];
 		if (expand === undefined) {
-			throw new TranslationError(TranslationError.KEY_NOT_FOUND, key);
+			throw new IntlError(IntlError.KEY_NOT_FOUND, key);
 		}
 
 		if (typeof expand === 'string') {
@@ -70,7 +70,7 @@ export class CachedTranslationProvider implements TranslationProvider {
 		return expand(vars);
 	}
 
-	public static fromLocale(locale: Locale, formats: Record<string, FormatFactory<any>> = builtInFormats) {
+	public static fromLocale(locale: Locale, formats: Record<string, Format<any>> = BUILTIN_FORMATS) {
 		const formatMap = mapObjectValues(formats, (factory, formatName) => factory(locale.$format?.[formatName]));
 		const formatProvider = new MappedFormatProvider(formatMap);
 		return new CachedTranslationProvider({

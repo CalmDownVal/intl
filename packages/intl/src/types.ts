@@ -15,6 +15,9 @@ export interface PlaceholderExpansion {
 	(vars?: Vars): string;
 }
 
+/**
+ * A service able to create placeholder expansions from parsed AST.
+ */
 export interface Interpreter {
 	interpret(ast: AST, octothorpeParam?: string): PlaceholderExpansion;
 }
@@ -22,22 +25,22 @@ export interface Interpreter {
 /**
  * A configured formatter able to expand placeholders.
  */
-export interface Format {
+export interface FormatCallback {
 	(placeholder: Placeholder, interpreter: Interpreter): PlaceholderExpansion;
 }
 
 /**
  * A factory function used to create Formatters with a specific configuration.
  */
-export interface FormatFactory<TConfig = void> {
-	(...args: (TConfig extends void ? [] : [ config: TConfig ])): Format;
+export interface Format<TConfig = void> {
+	(...args: (TConfig extends void ? [] : [ config: TConfig ])): FormatCallback;
 }
 
 /**
- * A service able to provide Formats by a name.
+ * A service able to provide configured formatters.
  */
 export interface FormatProvider {
-	getFormat(placeholder: Placeholder): Format;
+	getFormat(placeholder: Placeholder): FormatCallback;
 }
 
 /**
@@ -54,6 +57,10 @@ export interface Locale extends TranslationMap {
 	readonly $format?: Record<string, any>;
 }
 
+/**
+ * A service able to lookup phrases in a translation map expanding any
+ * placeholders within.
+ */
 export interface TranslationProvider {
 	expand(key: string, vars?: Vars): string;
 }

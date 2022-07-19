@@ -1,4 +1,4 @@
-import { FormatFactory, ParseError, TranslationError, CachedTranslationProvider, Vars, TranslationProvider } from '@calmdownval/intl';
+import { CachedTranslationProvider, Format, IntlError, TranslationProvider, Vars } from '@calmdownval/intl';
 import { Component, createContext, h } from 'preact';
 
 export interface Translation {
@@ -18,7 +18,7 @@ export interface Intl {
 
 export interface IntlProviderProps {
 	readonly credentials?: RequestInit['credentials'];
-	readonly formats?: Record<string, FormatFactory<any>>;
+	readonly formats?: Record<string, Format<any>>;
 	readonly headers?: RequestInit['headers'];
 	readonly onError?: (ex: Error) => void;
 	readonly url: string;
@@ -103,17 +103,6 @@ function translate(provider: TranslationProvider, keyOrTranslation: string | Tra
 			: provider.expand(keyOrTranslation.key, keyOrTranslation.vars);
 	}
 	catch (ex) {
-		let message;
-		if (TranslationError.is(ex)) {
-			message = ex.message;
-		}
-		else if (ParseError.is(ex)) {
-			message = 'ParseError';
-		}
-		else {
-			message = 'UnknownError';
-		}
-
-		return `${WARNING_EMOJI} ${message}`;
+		return `${WARNING_EMOJI} ${IntlError.is(ex) ? ex.message : 'UnknownError'}`;
 	}
 }
