@@ -29,14 +29,13 @@ export type Weekdays = [
 ];
 
 export interface DateTimeTranslations {
-	dayPeriodLower?: DayPeriod;
-	dayPeriodUpper?: DayPeriod;
+	dayPeriod?: DayPeriod;
 	monthsLong?: Months;
 	monthsShort?: Months;
 	weekdaysLong?: Weekdays;
 	weekdaysShort?: Weekdays;
 }
 
-export interface DateTimePartFormat<T = Date> {
-	(date: T, translations: DateTimeTranslations): string;
+export interface DateTimePartFormat {
+	(date: unknown, translations: DateTimeTranslations): string;
 }
