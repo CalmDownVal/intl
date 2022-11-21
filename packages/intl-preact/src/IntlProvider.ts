@@ -1,39 +1,20 @@
 import { CachedTranslationProvider, Format, IntlError, TranslationProvider, Vars } from '@calmdownval/intl';
-import { Component, createContext, h } from 'preact';
+import { Component, h } from 'preact';
 
-export interface Translation {
-	readonly key: string;
-	readonly vars?: Vars;
-}
-
-export interface TranslateFn {
-	(key: string, vars?: Vars): string;
-	(translation: Translation): string;
-}
-
-export interface Intl {
-	readonly isLoading: boolean;
-	readonly t: TranslateFn;
-}
+import { FETCHING_LOCALE_STATE, IntlContext, LOCALE_FETCH_ERROR_STATE } from './IntlContext';
+import type { Intl, PassThroughPhrase, Phrase } from './types';
+import { formatWarning } from './utils';
 
 export interface IntlProviderProps {
-	readonly credentials?: RequestInit['credentials'];
+	readonly fetchCredentials?: RequestInit['credentials'];
+	readonly fetchHeaders?: RequestInit['headers'];
 	readonly formats?: Record<string, Format<any>>;
-	readonly headers?: RequestInit['headers'];
 	readonly onError?: (ex: Error) => void;
 	readonly url: string;
 }
 
-const WARNING_EMOJI = '\u26a0\ufe0f';
-const INITIAL_STATE: Intl = {
-	isLoading: true,
-	t: () => ''
-};
-
-export const IntlContext = createContext<Intl>(INITIAL_STATE);
-
 export class IntlProvider extends Component<IntlProviderProps, Intl> {
-	public state = INITIAL_STATE;
+	public state = FETCHING_LOCALE_STATE;
 	private pendingFetch?: AbortController;
 
 	public componentDidMount() {
@@ -60,13 +41,12 @@ export class IntlProvider extends Component<IntlProviderProps, Intl> {
 
 	private async fetchLocale() {
 		try {
-			this.setState(INITIAL_STATE);
+			this.setState(FETCHING_LOCALE_STATE);
 			this.pendingFetch = new AbortController();
 
-			const { credentials, headers, url } = this.props;
-			const response = await fetch(url, {
-				credentials,
-				headers,
+			const response = await fetch(this.props.url, {
+				credentials: this.props.fetchCredentials,
+				headers: this.props.fetchHeaders,
 				method: 'GET',
 				signal: this.pendingFetch.signal
 			});
@@ -84,11 +64,8 @@ export class IntlProvider extends Component<IntlProviderProps, Intl> {
 			});
 		}
 		catch (ex: any) {
+			this.setState(LOCALE_FETCH_ERROR_STATE);
 			this.props.onError?.(ex);
-			this.setState({
-				isLoading: false,
-				t: () => ''
-			});
 		}
 		finally {
 			this.pendingFetch = undefined;
@@ -96,13 +73,41 @@ export class IntlProvider extends Component<IntlProviderProps, Intl> {
 	}
 }
 
-function translate(provider: TranslationProvider, keyOrTranslation: string | Translation, vars?: Vars) {
+function translate(provider: TranslationProvider, phrase: Phrase | string, varsOrFallbackText?: Vars | string, fallbackText?: string) {
+	let key;
+	let vars;
+	let fallback;
+
+	if (typeof phrase === 'string') {
+		key = phrase;
+		if (typeof varsOrFallbackText === 'string') {
+			fallback = varsOrFallbackText;
+		}
+		else {
+			vars = varsOrFallbackText;
+			fallback = fallbackText;
+		}
+	}
+	else {
+		if (isPassThrough(phrase)) {
+			return phrase.text;
+		}
+
+		key = phrase.key;
+		vars = phrase.vars;
+		fallback = phrase.fallbackText;
+	}
+
 	try {
-		return typeof keyOrTranslation === 'string'
-			? provider.expand(keyOrTranslation, vars)
-			: provider.expand(keyOrTranslation.key, keyOrTranslation.vars);
+		return provider.expand(key, vars);
 	}
 	catch (ex) {
-		return `${WARNING_EMOJI} ${IntlError.is(ex) ? ex.message : 'UnknownError'}`;
+		return fallback === undefined
+			? formatWarning(IntlError.is(ex) ? ex.message : 'UnknownError')
+			: fallback;
 	}
+}
+
+function isPassThrough(phrase: Phrase): phrase is PassThroughPhrase {
+	return typeof (phrase as PassThroughPhrase).text === 'string';
 }

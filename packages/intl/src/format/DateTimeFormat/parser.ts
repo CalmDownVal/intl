@@ -1,6 +1,6 @@
 import { IntlError } from '~/IntlError';
 
-import type { DateTimePartFormat, DateTimeTranslations } from './types';
+import type { DateTimeFormatter, DateTimeTranslations } from './types';
 
 interface PartFormatter {
 	(date: Date, length: number, translations: DateTimeTranslations): string;
@@ -161,7 +161,7 @@ const CC_UCZ = 90;
 const CC_LCA = 97;
 const CC_LCZ = 122;
 
-export function parseDateTimeFormat(pattern: string): DateTimePartFormat {
+export function parseDateTimeFormat(pattern: string): DateTimeFormatter {
 	const sequence: (PartFormatter | number | string)[] = [];
 	const { length } = pattern;
 	if (length === 0) {

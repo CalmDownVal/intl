@@ -4,7 +4,7 @@ import { IntlError } from './IntlError';
 import { MappedFormatProvider } from './MappedFormatProvider';
 import { parse } from './parser/parser';
 import type { Format, Interpreter, Locale, PlaceholderExpansion, TranslationMap, TranslationProvider, Vars } from './types';
-import { flattenTranslationMap, mapObjectValues } from './utils/mapping';
+import { flattenTranslationMap, mapObjectValuesNotNull } from './utils/mapping';
 
 export enum CacheMode {
 	/**
@@ -50,7 +50,7 @@ export class CachedTranslationProvider implements TranslationProvider {
 		this.expansions = flattenTranslationMap(translations);
 
 		if (cacheMode === CacheMode.Eager) {
-			this.expansions = mapObjectValues(this.expansions, phrase => interpreter.interpret(parse(phrase as string)));
+			this.expansions = mapObjectValuesNotNull(this.expansions, phrase => interpreter.interpret(parse(phrase as string)));
 		}
 	}
 
@@ -71,7 +71,15 @@ export class CachedTranslationProvider implements TranslationProvider {
 	}
 
 	public static fromLocale(locale: Locale, formats: Record<string, Format<any>> = BUILTIN_FORMATS) {
-		const formatMap = mapObjectValues(formats, (factory, formatName) => factory(locale.$format?.[formatName]));
+		const formatMap = mapObjectValuesNotNull(formats, (factory, formatName) => {
+			const config = locale.$format?.[formatName];
+			if (!config && factory.length > 0) {
+				return null;
+			}
+
+			return factory(locale.$format?.[formatName]);
+		});
+
 		const formatProvider = new MappedFormatProvider(formatMap);
 		return new CachedTranslationProvider({
 			cacheMode: CacheMode.Lazy,

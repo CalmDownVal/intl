@@ -1,11 +1,11 @@
 import { IntlError } from '~/IntlError';
 import type { Format } from '~/types';
-import { mapObjectValues } from '~/utils/mapping';
+import { mapObjectValuesNotNull } from '~/utils/mapping';
 import { expand } from '~/utils/placeholder';
 import { assertIdentifier, assertParamsValid } from '~/utils/validation';
 
 import { parseDateTimeFormat } from './parser';
-import { DateTimePartFormat, DateTimeTranslations } from './types';
+import { DateTimeFormatter, DateTimeTranslations } from './types';
 
 const paramTypes = [ assertIdentifier ] as const;
 
@@ -18,7 +18,7 @@ export interface TimeFormatConfig extends DateTimeTranslations {
 }
 
 export const DateTimeFormat: Format<TimeFormatConfig> = config => {
-	const formats: Record<string, DateTimePartFormat<unknown> | undefined> = mapObjectValues(config.formats, parseDateTimeFormat);
+	const formats: Record<string, DateTimeFormatter | undefined> = mapObjectValuesNotNull(config.formats, parseDateTimeFormat);
 	return placeholder => {
 		assertParamsValid(placeholder, paramTypes);
 

@@ -11,9 +11,9 @@ use a pair of consecutive quotes `''`).
 
 ## Supported patterns
 
-\* - requires relevant translations to be provided externally.
+\* - requires relevant translations to be provided at initialization.
 
-| pattern  | description                                                | example                     |
+| Pattern  | Description                                                | Examples                    |
 |----------|------------------------------------------------------------|-----------------------------|
 | `y`      | The year.                                                  | 1, 1999, 2022               |
 | `yy`     | The last two digits of a year with padding.                | 01, 99, 22                  |

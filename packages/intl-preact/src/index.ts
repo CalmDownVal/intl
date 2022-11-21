@@ -1,2 +1,3 @@
 export * from './IntlProvider';
-export * from './useIntl';
+export { IntlContext, useIntl, withIntl } from './IntlContext';
+export * from './types';

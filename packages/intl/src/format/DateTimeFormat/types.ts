@@ -36,6 +36,6 @@ export interface DateTimeTranslations {
 	weekdaysShort?: Weekdays;
 }
 
-export interface DateTimePartFormat {
+export interface DateTimeFormatter {
 	(date: unknown, translations: DateTimeTranslations): string;
 }

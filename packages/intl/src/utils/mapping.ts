@@ -32,11 +32,14 @@ export function flattenTranslationMap(map: TranslationMap): Record<string, strin
 	return flattenTranslationMapInto(map, {}, '');
 }
 
-export function mapObjectValues<TKey extends keyof any, TIn, TOut>(source: Record<TKey, TIn>, callback: (value: TIn, key: TKey) => TOut) {
-	const result = {} as Record<TKey, TOut>;
+export function mapObjectValuesNotNull<TKey extends keyof any, TIn, TOut>(source: Record<TKey, TIn>, callback: (value: TIn, key: TKey) => TOut) {
+	const result = {} as Record<TKey, NonNullable<TOut>>;
 	for (const key in source) {
 		if (Object.prototype.hasOwnProperty.call(source, key)) {
-			result[key] = callback(source[key], key);
+			const value = callback(source[key], key);
+			if (value !== null && value !== undefined) {
+				result[key] = value;
+			}
 		}
 	}
 
