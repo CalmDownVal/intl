@@ -20,7 +20,7 @@ Both packages already contain TypeScript declarations.
 First add a top-level provider to load a locale:
 
 ```tsx
-import { IntlProvider } from '@calmdownval/intl-preact';
+import { IntlProvider } from '@calmdownval/intl-react';
 import React from 'react';
 
 export const App = () => (
@@ -33,7 +33,7 @@ export const App = () => (
 Then use the intl hook within components:
 
 ```tsx
-import { useIntl } from '@calmdownval/intl-preact';
+import { useIntl } from '@calmdownval/intl-react';
 import React from 'react';
 
 export const SubmitButton = () => {
